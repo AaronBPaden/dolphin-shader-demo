@@ -18,13 +18,13 @@ float ToLinear1(float c)
 {
     return c;
 }
-vec3 ToLinear(vec3 c)
+float3 ToLinear(float3 c)
 {
     return c;
 }
-vec3 ToSrgb(vec3 c)
+float3 ToSrgb(float3 c)
 {
-    return pow(c, vec3(1.0 / 2.2));
+    return pow(c, float3(1.0 / 2.2, 1.0 / 2.2, 1.0 / 2.2));
 }
 #else
 float ToLinear1(float c)
@@ -35,12 +35,12 @@ float ToLinear1(float c)
     return(c<=0.04045) ? c/12.92 : pow((c + 0.055)/1.055, 2.4);
 }
 
-vec3 ToLinear(vec3 c)
+float3 ToLinear(float3 c)
 {
     if (!scaleInLinearGamma) 
         return c;
     
-    return vec3(ToLinear1(c.r), ToLinear1(c.g), ToLinear1(c.b));
+    return float3(ToLinear1(c.r), ToLinear1(c.g), ToLinear1(c.b));
 }
 
 // Linear to sRGB.
@@ -53,32 +53,32 @@ float ToSrgb1(float c)
     return(c<0.0031308 ? c*12.92 : 1.055*pow(c, 0.41666) - 0.055);
 }
 
-vec3 ToSrgb(vec3 c)
+float3 ToSrgb(float3 c)
 {
     if (!scaleInLinearGamma) 
         return c;
     
-    return vec3(ToSrgb1(c.r), ToSrgb1(c.g), ToSrgb1(c.b));
+    return float3(ToSrgb1(c.r), ToSrgb1(c.g), ToSrgb1(c.b));
 }
 #endif
 
 // Nearest emulated sample given floating point position and texel offset.
 // Also zero's off screen.
-vec3 Fetch(vec2 pos,vec2 off){
-  pos=(floor(pos*GetSrcResolution().xy+off)+vec2(0.5,0.5))/GetSrcResolution().xy;
+float3 Fetch(float2 pos,float2 off){
+  pos=(floor(pos*GetSrcResolution().xy+off)+float2(0.5,0.5))/GetSrcResolution().xy;
 #if SIMPLE_LINEAR_GAMMA
-  return ToLinear(brightBoost * pow(SampleLocation(pos.xy).rgb, vec3(2.2)));
+  return ToLinear(brightBoost * pow(SampleLocation(pos.xy).rgb, float3(2.2, 2.2, 2.2)));
 #else
   return ToLinear(brightBoost * SampleLocation(pos.xy).rgb);
 #endif
 }
   
 // Distance in emulated pixels to nearest texel.
-vec2 Dist(vec2 pos)
+float2 Dist(float2 pos)
 {
     pos = pos*GetSrcResolution().xy;
     
-    return -((pos - floor(pos)) - vec2(0.5));
+    return -((pos - floor(pos)) - float2(0.5, 0.5));
 }
     
 // 1D Gaussian.
@@ -88,11 +88,11 @@ float Gaus(float pos, float scale)
 }
 
 // 3-tap Gaussian filter along horz line.
-vec3 Horz3(vec2 pos, float off)
+float3 Horz3(float2 pos, float off)
 {
-    vec3 b    = Fetch(pos, vec2(-1.0, off));
-    vec3 c    = Fetch(pos, vec2( 0.0, off));
-    vec3 d    = Fetch(pos, vec2( 1.0, off));
+    float3 b    = Fetch(pos, float2(-1.0, off));
+    float3 c    = Fetch(pos, float2( 0.0, off));
+    float3 d    = Fetch(pos, float2( 1.0, off));
     float dst = Dist(pos).x;
 
     // Convert distance to weight.
@@ -106,12 +106,12 @@ vec3 Horz3(vec2 pos, float off)
 }
 
 // 5-tap Gaussian filter along horz line.
-vec3 Horz5(vec2 pos,float off){
-    vec3 a = Fetch(pos,vec2(-2.0, off));
-    vec3 b = Fetch(pos,vec2(-1.0, off));
-    vec3 c = Fetch(pos,vec2( 0.0, off));
-    vec3 d = Fetch(pos,vec2( 1.0, off));
-    vec3 e = Fetch(pos,vec2( 2.0, off));
+float3 Horz5(float2 pos,float off){
+    float3 a = Fetch(pos,float2(-2.0, off));
+    float3 b = Fetch(pos,float2(-1.0, off));
+    float3 c = Fetch(pos,float2( 0.0, off));
+    float3 d = Fetch(pos,float2( 1.0, off));
+    float3 e = Fetch(pos,float2( 2.0, off));
     
     float dst = Dist(pos).x;
     // Convert distance to weight.
@@ -127,15 +127,15 @@ vec3 Horz5(vec2 pos,float off){
 }
   
 // 7-tap Gaussian filter along horz line.
-vec3 Horz7(vec2 pos,float off)
+float3 Horz7(float2 pos,float off)
 {
-    vec3 a = Fetch(pos, vec2(-3.0, off));
-    vec3 b = Fetch(pos, vec2(-2.0, off));
-    vec3 c = Fetch(pos, vec2(-1.0, off));
-    vec3 d = Fetch(pos, vec2( 0.0, off));
-    vec3 e = Fetch(pos, vec2( 1.0, off));
-    vec3 f = Fetch(pos, vec2( 2.0, off));
-    vec3 g = Fetch(pos, vec2( 3.0, off));
+    float3 a = Fetch(pos, float2(-3.0, off));
+    float3 b = Fetch(pos, float2(-2.0, off));
+    float3 c = Fetch(pos, float2(-1.0, off));
+    float3 d = Fetch(pos, float2( 0.0, off));
+    float3 e = Fetch(pos, float2( 1.0, off));
+    float3 f = Fetch(pos, float2( 2.0, off));
+    float3 g = Fetch(pos, float2( 3.0, off));
 
     float dst = Dist(pos).x;
     // Convert distance to weight.
@@ -153,7 +153,7 @@ vec3 Horz7(vec2 pos,float off)
 }
   
 // Return scanline weight.
-float Scan(vec2 pos, float off)
+float Scan(float2 pos, float off)
 {
     float dst = Dist(pos).y;
 
@@ -161,7 +161,7 @@ float Scan(vec2 pos, float off)
 }
   
 // Return scanline weight for bloom.
-float BloomScan(vec2 pos, float off)
+float BloomScan(float2 pos, float off)
 {
     float dst = Dist(pos).y;
     
@@ -169,11 +169,11 @@ float BloomScan(vec2 pos, float off)
 }
 
 // Allow nearest three lines to effect pixel.
-vec3 Tri(vec2 pos)
+float3 Tri(float2 pos)
 {
-    vec3 a = Horz3(pos,-1.0);
-    vec3 b = Horz5(pos, 0.0);
-    vec3 c = Horz3(pos, 1.0);
+    float3 a = Horz3(pos,-1.0);
+    float3 b = Horz5(pos, 0.0);
+    float3 c = Horz3(pos, 1.0);
     
     float wa = Scan(pos,-1.0); 
     float wb = Scan(pos, 0.0);
@@ -183,13 +183,13 @@ vec3 Tri(vec2 pos)
 }
   
 // Small bloom.
-vec3 Bloom(vec2 pos)
+float3 Bloom(float2 pos)
 {
-    vec3 a = Horz5(pos,-2.0);
-    vec3 b = Horz7(pos,-1.0);
-    vec3 c = Horz7(pos, 0.0);
-    vec3 d = Horz7(pos, 1.0);
-    vec3 e = Horz5(pos, 2.0);
+    float3 a = Horz5(pos,-2.0);
+    float3 b = Horz7(pos,-1.0);
+    float3 c = Horz7(pos, 0.0);
+    float3 d = Horz7(pos, 1.0);
+    float3 e = Horz5(pos, 2.0);
 
     float wa = BloomScan(pos,-2.0);
     float wb = BloomScan(pos,-1.0); 
@@ -201,18 +201,18 @@ vec3 Bloom(vec2 pos)
 }
   
 // Distortion of scanlines, and end of screen alpha.
-vec2 Warp(vec2 pos)
+float2 Warp(float2 pos)
 {
     pos  = pos*2.0-1.0;    
-    pos *= vec2(1.0 + (pos.y*pos.y)*warpX, 1.0 + (pos.x*pos.x)*warpY);
+    pos *= float2(1.0 + (pos.y*pos.y)*warpX, 1.0 + (pos.x*pos.x)*warpY);
     
     return pos*0.5 + 0.5;
 }
   
 // Shadow mask.
-vec3 Mask(vec2 pos)
+float3 Mask(float2 pos)
 {
-    vec3 mask = vec3(maskDark, maskDark, maskDark);
+    float3 mask = float3(maskDark, maskDark, maskDark);
   
     // Very compressed TV style shadow mask.
     if (shadowMask == 1.0) 
@@ -255,7 +255,7 @@ vec3 Mask(vec2 pos)
     // VGA style shadow mask.
     else if (shadowMask == 4.0) 
     {
-        pos.xy  = floor(pos.xy*vec2(1.0, 0.5));
+        pos.xy  = floor(pos.xy*float2(1.0, 0.5));
         pos.x  += pos.y*3.0;
         pos.x   = fract(pos.x*0.166666666);
 
@@ -269,8 +269,8 @@ vec3 Mask(vec2 pos)
 
 void main()
 {
-    vec2 pos = Warp(GetCoordinates());
-    vec3 outColor = Tri(pos);
+    float2 pos = Warp(GetCoordinates());
+    float3 outColor = Tri(pos);
 
 #if DO_BLOOM
     //Add Bloom
@@ -280,6 +280,5 @@ void main()
     if (shadowMask > 0.0)
         outColor.rgb *= Mask(GetCoordinates().xy / GetInvWindowResolution() * 1.000001);
     
-    /* FragColor = vec4(ToSrgb(outColor.rgb), 1.0); */
-    SetOutput(vec4(ToSrgb(outColor), 1.0));
+    SetOutput(float4(ToSrgb(outColor), 1.0));
 }
