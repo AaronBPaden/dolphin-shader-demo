@@ -1,0 +1,152 @@
+{
+	"meta":
+	{
+		"author": "Timothy Lottes, Aaron Paden (porting)",
+		"description": "CRT Lottes"
+	},
+	"options":
+	[
+		{
+			"type": "float",
+			"name": "hardScan",
+			"ui_name": "Hard Scan",
+			"min": [ -20.0 ],
+			"max": [ 0.0 ],
+			"step": [ 1.0 ],
+			"default": [ -6.0 ]
+		},
+		{
+			"type": "float",
+			"name": "hardPix",
+			"ui_name": "Hard Pix",
+			"min": [ -20.0 ],
+			"max": [ 0.0 ],
+			"step": [ 1.0 ],
+			"default": [ -4.0 ]
+		},
+		{
+			"type": "float",
+			"name": "warpX",
+			"ui_name": "Warp X",
+			"min": [ 0.0 ],
+			"max": [ 0.125 ],
+			"step": [ 0.01 ],
+			"default": [ 0.00 ]
+		},
+		{
+			"type": "float",
+			"name": "warpY",
+			"ui_name": "Warp Y",
+			"min": [ 0.0 ],
+			"max": [ 0.125 ],
+			"step": [ 0.01 ],
+			"default": [ 0.00 ]
+		},
+		{
+			"type": "float",
+			"name": "maskDark",
+			"ui_name": "mask dark",
+			"min": [ 0.0 ],
+			"max": [ 2.0 ],
+			"step": [ 0.01 ],
+			"default": [ 0.5 ]
+		},
+		{
+			"type": "float",
+			"name": "maskLight",
+			"ui_name": "mask light",
+			"min": [ 0.0 ],
+			"max": [ 2.0 ],
+			"step": [ 0.01 ],
+			"default": [ 0.8 ]
+		},
+		{
+			"type": "float",
+			"name": "shadowMask",
+			"ui_name": "Shadow Mask: 1 - TV 2 - Aperture-grille, 3 - Stretched VGA, 4 - VGA",
+			"min": [ 1.0 ],
+			"max": [ 4.0 ],
+			"step": [ 1.0 ],
+			"default": [ 3.0 ]
+		},
+		{
+			"type": "float",
+			"name": "brightBoost",
+			"ui_name": "Brightness Boost",
+			"min": [ 0.0 ],
+			"max": [ 2.0 ],
+			"step": [ 0.01 ],
+			"default": [ 1.4 ]
+		},
+		{
+			"type": "float",
+			"name": "hardBloomPix",
+			"ui_name": "Hard Bloom Pix",
+			"min": [ -2.0 ],
+			"max": [ -0.5 ],
+			"step": [ 0.01 ],
+			"default": [ -1.5 ]
+		},
+		{
+			"type": "float",
+			"name": "hardBloomScan",
+			"ui_name": "Hard Bloom Scan",
+			"min": [ -4.0 ],
+			"max": [ -1.0 ],
+			"step": [ 0.01 ],
+			"default": [ -2.0 ]
+		},
+		{
+			"type": "float",
+			"name": "bloomAmount",
+			"ui_name": "Bloom Amount",
+			"min": [ 0.0 ],
+			"max": [ 1.0 ],
+			"step": [ 0.05 ],
+			"default": [ 0.25 ]
+		},
+		{
+			"type": "float",
+			"name": "shape",
+			"ui_name": "filter kernel shape",
+			"min": [ 0.0 ],
+			"max": [ 10.0 ],
+			"step": [ 0.05 ],
+			"default": [ 2.0 ]
+		},
+		{
+			"type": "bool",
+			"name": "scaleInLinearGamma",
+			"ui_name": "Scale in Linear Gamma",
+			"default": true
+		},
+		{
+			"type": "bool",
+			"name": "DO_BLOOM",
+			"ui_name": "Do bloom (perf)?",
+			"default": true,
+			"is_constant": true
+		},
+		{
+			"type": "bool",
+			"name": "SIMIPLE_LINEAR_GAMMA",
+			"ui_name": "Simple linear gamma (perf)?",
+			"is_constant": true,
+			"default": false
+		}
+	],
+	"passes":
+	[
+		{
+			"entry_point": "main",
+			"inputs":
+			[
+				{
+					"type": "previous_pass",
+					"texture_filter": "linear",
+					"texture_mode": "clamp"
+				}
+			]
+		}
+	]
+}
