@@ -10,18 +10,18 @@
 			"type": "float",
 			"name": "u_lowpass_cutoff",
 			"ui_name": "Lowpass cutoff pixels/scanline",
-			"min": 100.0,
-			"max": 1000.0,
-			"step": 10,
+			"min": [ 100.0 ],
+			"max": [ 1000.0 ],
+			"step": [ 10 ],
 			"default": [250.0]
 		},
 		{
 			"type": "float",
 			"name": "u_lowpass_width",
 			"ui_name": "Lowpass width",
-			"min": 0.0,
-			"max": 300.0,
-			"step": 10.0,
+			"min": [ 0.0 ],
+			"max": [ 300.0 ],
+			"step": [ 10.0 ],
 			"default": [300.0]
 		}
 	],
