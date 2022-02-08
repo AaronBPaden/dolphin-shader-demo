@@ -269,7 +269,8 @@ float3 Mask(float2 pos)
 
 void main()
 {
-    float2 pos = Warp(GetCoordinates());
+    /* GetSrcResolution == 640 x 528? */
+    float2 pos = Warp(GetCoordinates()*(GetResolution()/GetSrcResolution()))*(GetSrcResolution()/GetResolution());
     float3 outColor = Tri(pos);
 
 #if DO_BLOOM
