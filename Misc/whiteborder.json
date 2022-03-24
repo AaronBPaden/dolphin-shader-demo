@@ -1,0 +1,33 @@
+{
+	"meta":
+	{
+		"author": "Aaron Paden",
+		"description": "White Border"
+	},
+	"options":
+	[
+		{
+			"type": "float",
+			"name": "width",
+			"ui_name": "Border width",
+			"min": [ 1.0 ],
+			"max": [ 50.0 ],
+			"step": [ 1.0 ],
+			"default": [10.0]
+		}
+	],
+	"passes":
+	[
+		{
+			"entry_point": "main",
+			"inputs":
+			[
+				{
+					"type": "previous_pass",
+					"texture_filter": "linear",
+					"texture_mode": "clamp"
+				}
+			]
+		}
+	]
+}
